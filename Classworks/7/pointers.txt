@@ -1,0 +1,24 @@
+
+1.Wild Pointers
+    Not initialized.
+2.Void Pointers
+
+Pointer to 
+    data memeber
+    class
+    memeber function
+
+Arrays and Pointers
+
+Questions: Like - What's the difference between structure(struct) vs class?
+
+Why we use pointers?
+Static vs Dynamic Memory Allocation
+
+What is "this pointer" 
+
+For next class.
+What are these?
+ctype strings
+and
+this pointer

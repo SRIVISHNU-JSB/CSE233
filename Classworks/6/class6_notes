@@ -1,0 +1,17 @@
+
+Reference Variable
+A short name for a long name variable
+// int numberOfStudentsRegistered
+Charactor "&" used for address of operations
+
+What is simple variable?
+What is pointer variable?
+uninitialized pointer is known as wild pointer
+pointers will occupy the same memore irrespective of datatypes
+"&" Address of variable
+"*" Value of Address
+
+Questions
+Size of Data Types in C, CPP and Python
+
+WAP to swap two numbers, create a function swap() whith its return type int with two parameters.
