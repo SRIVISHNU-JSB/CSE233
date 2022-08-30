@@ -1,0 +1,10 @@
+Class 8
+
+Notes:
+Learn more about "this pointer" "->"
+
+Constructors
+
+Default
+Parameterized
+Copy
