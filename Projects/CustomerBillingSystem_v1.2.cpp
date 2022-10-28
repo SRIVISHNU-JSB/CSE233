@@ -57,7 +57,7 @@ class Customer:public Credentials
     static int counter;
     char acct_type, choice;
     int i, n, acct_no, mobile_no, acc_no, flag = 0;
-    string name, name_s, street, city, date;
+    string name, name_check, street, city, date;
     float old_balance, new_balance, payment, bill_os;
     
 	public:
@@ -73,18 +73,7 @@ class Customer:public Credentials
         void createCustomer()
         {
             counter++;
-            /*
-            cout<<"\n\t Entry Number : "<<counter;
-            cout<<"\n\n\t Account Number : "; cin>>acct_no;
-            cout<<"\n\t	Name : "; cin>>name;
-            cout<<"\n\t	Contact Number : "; cin>>mobile_no;
-            cout<<"\n\t	Street : "; cin>>street;
-            cout<<"\n\t	City : "; cin>>city;
-            cout<<"\n\t	Previous balance : "; cin>>old_balance;
-            cout<<"\n\t	Current payment	: "; cin>>payment;
-            cout<<"\n\t	B.Outstandings : "; cin>>bill_os; ////Bill Outstandingss 
-            cout<<"\n\t	Payment date (mm/dd/yyyy)	: "; cin>>date;
-            */
+
             cout<<"\n\n\t\t	Entry Number	: "<<counter;
             cout<<"\n\n\t\t	Name		: "; cin>>name;
 			cout<<"\n\t		Contact Number  : "; cin>>mobile_no;
@@ -94,13 +83,13 @@ class Customer:public Credentials
 			cout<<"\n\t		Old balance    	: "; cin>>old_balance;
 			cout<<"\n\t		Current payment	: "; cin>>payment;
 			cout<<"\n\t		Payment date   	: "; cin>>date;
-			cout<<"\n\t		B.Outstandings 	: "; cin>>bill_os; //Bill Outstandingss
+			cout<<"\n\t		B.Outstandings 	: "; cin>>bill_os; //Bill Outstandings
 		  
             if(payment>0)
             {
                 acct_type=(payment<old_balance)? 'O' : 'L';
             }
-            else
+            elses
             {
                 acct_type=(old_balance>0)? 'O' : 'P';
             }
@@ -402,12 +391,12 @@ int Credentials::login()
 
 void Credentials::registration(int a)
 {  
-    string reguser,regpass,ru,rp,admin;
+    string reg_user,reg_pass,ru,rp,admin;
     system("cls");
     cout<<"Enter the username: ";
-    cin>>reguser;
+    cin>>reg_user;
     cout<<"\nEnter the password: ";
-    cin>>regpass;
+    cin>>reg_pass;
     if(a==1)
     {
         cout<<"Please confirm you are an admin user? Y/N ";
@@ -418,7 +407,7 @@ void Credentials::registration(int a)
         admin="N";
     
     ofstream reg("login_database.txt",ios ::app);
-    reg<<reguser<<' '<<regpass<<' '<<admin<<endl;
+    reg<<reg_user<<' '<<reg_pass<<' '<<admin<<endl;
     cout<<"\nRegistration Successful\n";
     system("cls");
     ad.welcome(0);           
@@ -429,7 +418,7 @@ void Credentials::registration(int a)
 void Credentials::registrationAdvanced(int a)
 {
     string new_username,validate_name,new_password,confirm_password,search_user,search_pass;
-	int minimum_size;
+	int minimum_length;
 	char ch;
 	
 	bool registration_status = false;
@@ -444,10 +433,10 @@ void Credentials::registrationAdvanced(int a)
     {
         cout << "Enter Your Username: ";
 	    getline(cin>>ws, new_username);
-	    minimum_size = new_username.length();
+	    minimum_length = new_username.length();
 	
 	    fstream read("login_database.txt",ios ::in);
-	    if(minimum_size >= 3)
+	    if(minimum_length >= 3)
 	    {
 	        if(read && registration_status != true && read.is_open())
 	        {
@@ -483,9 +472,9 @@ void Credentials::registrationAdvanced(int a)
 	    getline(cin>>ws,new_password);
 	    cout << "Confirm Your password: ";
 	    getline(cin>>ws,confirm_password);
-	    minimum_size = new_password.length();
+	    minimum_length = new_password.length();
 	
-	    if (minimum_size < 3)
+	    if (minimum_length < 3)
 		{
 	        cout << "\nYour password is weak, Enter at least 3 letters\n \n";
 	    }
@@ -565,7 +554,7 @@ void Credentials::forgot()
                     read.close();
                     if(count==1)
                     {
-                        cout<<"\n\nHurrah, account found\n";
+                        cout<<"\n\nHurrah, account found!\n";
                         cout<<"\nYour password is "<<sp;
                         cin.get();
                         cin.get();
@@ -738,7 +727,7 @@ void Customer::customerPage()
 {
 	system("cls");
 	cout<<"\n==============================================================\n";
-	cout<<"\n\t\tCUSTOMER BILLING SYSTEM\n";
+	cout<<"\n\t\tWelcome to Customer Portal\n";
 	cout<<"\n==============================================================\n";
 	cout<<"1:\tVIEW YOUR ACCOUNT INFORMATION\n";
     cout<<"2:\tPLACE A NEW ORDER\n";
@@ -800,7 +789,7 @@ void Customer::adminSearch(char ch)
 {
 	system("cls");
 	int acc_no, flag;
-	string name_s;
+	string name_check;
 	
 	if(ch == '1')
 	{
@@ -826,12 +815,12 @@ void Customer::adminSearch(char ch)
 	else if(ch == '2')
 	{
 		cout<<"\n\tEnter the Customer Account Name: ";
-		getline(cin>>ws,name_s);
+		getline(cin>>ws,name_check);
 		
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.name == name_s)
+	        if (cr.name == name_check)
 	        {
 	            system("cls");
 	            cr.viewCustomer();
@@ -877,7 +866,7 @@ void Customer::customerSearch(char ch)
 {
 	system("cls");
 	int acc_no, flag;
-	string name_s;
+	string name_check;
 	
 	if(ch == '1')
 	{
@@ -903,12 +892,12 @@ void Customer::customerSearch(char ch)
 	else if(ch == '2')
 	{
 		cout<<"\n\tEnter the Customer Account Name: ";
-		getline(cin>>ws,name_s);
+		getline(cin>>ws,name_check);
 		
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.name == name_s)
+	        if (cr.name == name_check)
 	        {
 	            system("cls");
 	            cr.viewCustomer();
