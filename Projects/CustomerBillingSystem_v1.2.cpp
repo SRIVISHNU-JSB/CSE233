@@ -1,5 +1,5 @@
 /*
-Title - CUSTOMER BILLING SYSTEM (Project Version 1.2.3) && Submission Date - October 31, 2022
+Title - CUSTOMER BILLING SYSTEM (Project Version 1.2) && Submission Date - October 31, 2022
 A Project by SRI VISHNU JSB
 */
 
@@ -9,7 +9,7 @@ HOW TO USE THIS PROGRAM?
 2.We will have to add the customer accounts
 3.We need to create the products using Admin account and verify the list of products created
 4.Login using Customer account and confirm the customer details and place an order
-5.As an admin account verify the balance sheet / customer information for the new Bill Outstandings
+5.As an admin account verify the balance sheet/ customer information for new the Bill Outstandings
 */
 
 #include<iostream>
@@ -256,10 +256,12 @@ int main()
     }
     catch(int i)
     {
-        cout<<"\nPlease select only correct option provided.";
+        cout<<"\nPlease select only correct option provided.\n\n";
+        system("PAUSE");
+//        sleep(5);
     }
-    cin.get();
-    cin.get();
+//    cin.get();
+//    cin.get();
 	main();
 }
 
@@ -333,6 +335,7 @@ void Administration::welcome(int a)
     catch(int i)
     {
     	cout<<"Please select only correct option provided.";
+    	sleep(5);
     	welcome(0);
 	}
 }
@@ -634,6 +637,7 @@ void Credentials::forgot()
     catch(int i)
     {
         cout<<"Please select only the correct option provided.";
+        sleep(5);
         forgot();
     }	
 }
@@ -716,6 +720,7 @@ void Customer::adminPage()
 		catch(int i)
 	    {
 	    	cout<<"Please select only from the options provided.";
+	    	sleep(5);
 	    	goto search;
 		}	
 	case '3':
@@ -774,6 +779,7 @@ void Customer::customerPage()
 		catch(int i)
 	    {
 	    	cout<<"Please select only from the options provided.";
+	    	sleep(5);
 	    	goto search;
 		}
     case '2':
