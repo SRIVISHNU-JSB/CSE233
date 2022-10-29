@@ -1,5 +1,5 @@
 /*
-Title - CUSTOMER BILLING SYSTEM (Project Version 1.2) && Submission Date - October 31, 2022
+Title - CUSTOMER BILLING SYSTEM (Project Version 1.2.3) && Submission Date - October 31, 2022
 A Project by SRI VISHNU JSB
 */
 
@@ -9,7 +9,7 @@ HOW TO USE THIS PROGRAM?
 2.We will have to add the customer accounts
 3.We need to create the products using Admin account and verify the list of products created
 4.Login using Customer account and confirm the customer details and place an order
-5.Login as Admin account verify the balance sheet/ customer information for Bill Outstandings
+5.As an admin account verify the balance sheet/ customer information for new the Bill Outstandings
 */
 
 #include<iostream>
@@ -82,7 +82,7 @@ class Customer:public Credentials
         void createCustomer()
         {
             counter++;
-   
+
             cout<<"\n\n\t\t	Entry Number	: "<<counter;
             cout<<"\n\n\t\t	Name		: "; cin>>name;
 			cout<<"\n\t		Contact Number  : "; cin>>mobile_no;
@@ -213,7 +213,9 @@ Product pr;
 
 int main()
 {
-    char choice;
+    int choice; string choice1;
+    stringstream ss;
+    
     system("cls");
     intro();
     try
@@ -230,38 +232,35 @@ int main()
             cout<<"2.CUSTOMER"<<endl;
             cout<<"3.EXIT"<<endl;
             cout<<"\nPlease select your option (1-3) ";
-            cin>>choice;
-
-            if(choice == '1' || choice == '2' || choice == '3')
+            cin>>choice1;
+			
+			ss << choice1; ss >> choice;
+			
+            if(choice == 1)
+                ad.welcome(1);
+            else if(choice == 2)
+                ad.welcome(2);
+            else if(choice == 3)
             {
-                switch(choice)
-                {
-                    case '1':
-                        ad.welcome(1);
-                    case '2':
-                        ad.welcome(2);
-                    case '3':
-                        cout<<"\nThanks for using this program!!!\n\n";
-						cout<<"This program is created by "<<ad.returnCreator()<<"\n";
-                        exit(0);
-                    default:
-                        system("cls");
-                        cout<<"\a"<<endl;
-                }
+                cout<<"\nThanks for using this program!!!\n\n";
+				cout<<"This program is created by "<<ad.returnCreator()<<"\n";
+                exit(0);
             }
             else
             {
-                system("cls");
-                cout<<"Exception";
+//              system("cls");
+                cout<<"\nException!!!\n";
                 throw(10);
             }
         } while (choice !=3);
     }
     catch(int i)
     {
-        cout<<"Please select only correct option provided.";
-        main();
-    }  
+        cout<<"\nPlease select only correct option provided.";
+    }
+    cin.get();
+    cin.get();
+	main();
 }
 
 //****************************************************************
@@ -328,7 +327,7 @@ void Administration::welcome(int a)
         {
         	system("cls");
         	cout<<"Exception";
-        	throw(10);	
+        	throw(10);
 		}
 	}
     catch(int i)
@@ -415,7 +414,7 @@ void Credentials::registration(int a)
     else
         admin="N";
     
-    ofstream reg("login_database.txt",ios ::app);
+    ofstream reg("login_database.txt",ios :: app);
     reg<<reguser<<' '<<regpass<<' '<<admin<<endl;
     cout<<"\nRegistration Successful\n";
     system("cls");
@@ -462,7 +461,7 @@ void Credentials::registrationAdvanced(int a)
 	            read.close();
 	            if(registration_status)
 	            {      
-	            registration_status = false;
+	            	registration_status = false;
 	            }
 	            else
 	            {
@@ -526,10 +525,11 @@ void Credentials::registrationAdvanced(int a)
 
 void Credentials::forgot()
 {
-    char ch, choice;
-    int count;
+    char ch; 
+	int choice, count;
     string search_user,su,sp;
-    string search_pass,su2,sp2;
+    string search_pass,su2,sp2, choice1;
+    stringstream ss;
     
     system("cls");
     try
@@ -539,102 +539,98 @@ void Credentials::forgot()
         cout<<"2.Search your id by password"<<endl;
         cout<<"3.Go back\n"<<endl;
         cout<<"Enter your choice: ";
-        cin>>choice;
+        cin>>choice1;
         
-        if(choice == '1' || choice == '2' || choice == '3')
+        ss << choice1; ss >> choice;
+        
+        switch(choice)
         {
-            switch(choice)
+            case 1:
             {
-                case '1':
-                {
-                    cout<<"\nEnter your last known username: ";
-                    cin>>search_user;
-                    
-                    fstream read("login_database.txt",ios :: in);
-                    while(read>>su>>sp>>ch)
-                    {
-  
-                        if(su==search_user)
-                        {
-                            count=1;
-                            break;
-                        }
-                    }
-                    read.close();
-                    if(count==1)
-                    {
-                        cout<<"\n\nHurrah, account found\n";
-                        cout<<"\nYour password is "<<sp;
-                        cin.get();
-                        cin.get();
-                        system("cls");
-                        ad.welcome(10);
-                    }
-                    else
-                    {
-                        cout<<"\n\nSorry, your userID is not found in the database.\n";
-                        cout<<"\nPlease contact system administrator for more details.\n";
-                        cin.get();
-                        cin.get();
-                        ad.welcome(10);
-                    }
-                    break;
-                }
+                cout<<"\nEnter your last known username: ";
+                cin>>search_user;
                 
-                case '2':
+                ifstream read("login_database.txt",ios :: in);
+                while(read>>su>>sp>>ch)
                 {
-                    cout<<"\nEnter your last known password: ";
-                    cin>>search_pass;
 
-					fstream read("login_database.txt",ios :: in);
-                    while(read>>su2>>sp2>>ch)
+                    if(su==search_user)
                     {
-                    	
-                        if(sp2==search_pass)
-                        {
-                            count=1;
-                            break;
-                        }       
+                        count=1;
+                        break;
                     }
-                    read.close();
-                    if(count==1)
-                    {
-                        cout<<"\nYour password is found in the database.\n";
-                        cout<<"\nYour Id is : "<<su2;
-                        cin.get();
-                        cin.get();
-                        system("cls");
-                        ad.welcome(0);
-                    }
-                    else
-                    {
-                        cout<<"Sorry, We could not find your password in our database!\n";
-                        cout<<"\nPlease contact the administrator for more information\n";
-                        cin.get();
-                        cin.get();
-                        ad.welcome(0);
-                    }
-            
-                    break;
                 }
-                
-                case '3':
+                read.close();
+                if(count==1)
                 {
-                    ad.welcome(0);
-                    break;
+                    cout<<"\n\nHurrah, account found\n";
+                    cout<<"\nYour password is "<<sp;
+                    cin.get();
+                    cin.get();
+                    system("cls");
+                    ad.welcome(10);
                 }
-                default:
-                    cout<<"Sorry! Select only from the options. Please try again!"<<endl;
-                    forgot();
+                else
+                {
+                    cout<<"\n\nSorry, your userID is not found in the database.\n";
+                    cout<<"\nPlease contact system administrator for more details.\n";
+                    cin.get();
+                    cin.get();
+                    ad.welcome(10);
+                }
+                break;
             }
-        }
-        else
-        {
-            system("cls");
-            cout<<"Exception";
-            throw(10);
-        }
-    }
+            
+            case 2:
+            {
+                cout<<"\nEnter your last known password: ";
+                cin>>search_pass;
+
+				fstream read("login_database.txt",ios :: in);
+                while(read>>su2>>sp2>>ch)
+                {
+                	
+                    if(sp2==search_pass)
+                    {
+                        count=1;
+                        break;
+                    }       
+                }
+                read.close();
+                if(count==1)
+                {
+                    cout<<"\nYour password is found in the database.\n";
+                    cout<<"\nYour Id is : "<<su2;
+                    cin.get();
+                    cin.get();
+                    system("cls");
+                    ad.welcome(0);
+                }
+                else
+                {
+                    cout<<"Sorry, We could not find your password in our database!\n";
+                    cout<<"\nPlease contact the administrator for more information\n";
+                    cin.get();
+                    cin.get();
+                    ad.welcome(0);
+                }
+        
+                break;
+            }
+            
+            case 3:
+            {
+                ad.welcome(0);
+                break;
+            }
+            default:
+	            cout<<"\nException!!!";
+	            cout<<"\n\nSorry! Select only from the options. Please try again!\n"<<endl;
+	            cin.get(); cin.get();
+	            throw(10);
+            }
+    	}
+    	
     catch(int i)
     {
         cout<<"Please select only the correct option provided.";
@@ -1132,8 +1128,8 @@ void Administration::placeOrder()
 
     cout << "\n\n\t\t\t\t\t\tTOTAL = " << total;
     
-	fs.open("customers_database.txt", ios :: in );
-    fs.read((char * ) & cr, sizeof(Customer));
+	fs.open("customers_database.txt", ios :: in | ios :: out );
+//    fs.read((char * ) & cr, sizeof(Customer));
     while (fs.read((char * ) & cr, sizeof(Customer))) 
 	{
 	    if(cr.acct_no == acc_no)
@@ -1142,6 +1138,7 @@ void Administration::placeOrder()
     		flag = 1;
     		cout<<"\n\nYour Total Outstanding Bills = "<<cr.bill_os;
     		cin.get();
+    		fs.write((char * ) & cr, sizeof(Product));
     	}
 	}
 	if(flag == 0)
@@ -1155,7 +1152,7 @@ void Administration::placeOrder()
 // INTRODUCTION FUNCTION
 //****************************************************************
 
-void intro() 
+void intro()
 {
     system("cls");
     
