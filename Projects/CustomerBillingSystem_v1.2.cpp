@@ -9,7 +9,7 @@ HOW TO USE THIS PROGRAM?
 2.We will have to add the customer accounts
 3.We need to create the products using Admin account and verify the list of products created
 4.Login using Customer account and confirm the customer details and place an order
-5.As an admin account verify the balance sheet/ customer information for new the Bill Outstandings
+5.As an admin account verify the balance sheet / customer information for the new Bill Outstandings
 */
 
 #include<iostream>
