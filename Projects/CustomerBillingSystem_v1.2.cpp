@@ -17,6 +17,7 @@ HOW TO USE THIS PROGRAM?
 #include<sstream>
 #include<string>
 #include<stdlib.h>
+#include<unistd.h>
 
 using namespace std;
 
