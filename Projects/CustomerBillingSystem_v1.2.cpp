@@ -60,14 +60,23 @@ class Credentials
         void forgot();
 };
 
+// struct for storing customer specific information
+struct customer
+{
+	char acct_type;
+	int acct_no, mobile_no;
+	string name, street, city, date;
+	float old_balance, new_balance, payment, bill_os;
+};
+
 // class for managing all the customer related information 
 class Customer:public Credentials
 {
     static int counter;
-    char acct_type, choice;
-    int i, n, acct_no, mobile_no, acc_no, flag = 0;
-    string name, name_s, street, city, date;
-    float old_balance, new_balance, payment, bill_os;
+    char choice;
+    customer kyc;
+    string name_s;
+    int i, n, flag = 0;
     
 	public:
 		friend class Product;
@@ -84,43 +93,43 @@ class Customer:public Credentials
             counter++;
 
             cout<<"\n\n\t\t	Entry Number	: "<<counter;
-            cout<<"\n\n\t\t	Name		: "; cin>>name;
-			cout<<"\n\t		Contact Number  : "; cin>>mobile_no;
-			cout<<"\n\t		Account Number 	: "; cin>>acct_no;
-			cout<<"\n\t		Street         	: "; cin>>street;
-			cout<<"\n\t		City           	: "; cin>>city;
-			cout<<"\n\t		Old balance    	: "; cin>>old_balance;
-			cout<<"\n\t		Current payment	: "; cin>>payment;
-			cout<<"\n\t		Payment date   	: "; cin>>date;
-			cout<<"\n\t		B.Outstandings 	: "; cin>>bill_os; //Bill Outstandingss
+            cout<<"\n\n\t\t	Name		: "; getline(cin>>ws,kyc.name);
+			cout<<"\n\t		Contact Number  : "; cin>>kyc.mobile_no;
+			cout<<"\n\t		Account Number 	: "; cin>>kyc.acct_no;
+			cout<<"\n\t		Street         	: "; getline(cin>>ws,kyc.street);
+			cout<<"\n\t		City           	: "; getline(cin>>ws,kyc.city);
+			cout<<"\n\t		Old balance    	: "; cin>>kyc.old_balance;
+			cout<<"\n\t		Current payment	: "; cin>>kyc.payment;
+			cout<<"\n\t		Payment date   	: "; cin>>kyc.date;
+			cout<<"\n\t		B.Outstandings 	: "; cin>>kyc.bill_os; //Bill Outstandingss
 		  
-            if(payment>0)
+            if(kyc.payment>0)
             {
-                acct_type=(payment<old_balance)? 'O' : 'L';
+                kyc.acct_type=(kyc.payment<kyc.old_balance)? 'O' : 'L';
             }
             else
             {
-                acct_type=(old_balance>0)? 'O' : 'P';
+                kyc.acct_type=(kyc.old_balance>0)? 'O' : 'P';
             }
-            new_balance=old_balance - payment;
+            kyc.new_balance=kyc.old_balance - kyc.payment;
         }
 
 		void viewCustomer()
 		{
 		//	cout<<"\n\n\t	Serial Number: "<<serial_number;
-			cout<<"\n\n\t\t	Name		: "<<name;
-			cout<<"\n\t		Contact Number  : "<<mobile_no;
-			cout<<"\n\t		Account Number 	: "<<acct_no;
-			cout<<"\n\t		Street         	: "<<street;
-			cout<<"\n\t		City           	: "<<city;
-			cout<<"\n\t		Old balance    	: "<<old_balance;
-			cout<<"\n\t		Current payment	: "<<payment;
-			cout<<"\n\t		New balance    	: "<<new_balance;
-			cout<<"\n\t		Payment date   	: "<<date;
-			cout<<"\n\t		B.Outstandings 	: "<<bill_os; //Bill Outstandingss
+			cout<<"\n\n\t\t	Name		: "<<kyc.name;
+			cout<<"\n\t		Contact Number  : "<<kyc.mobile_no;
+			cout<<"\n\t		Account Number 	: "<<kyc.acct_no;
+			cout<<"\n\t		Street         	: "<<kyc.street;
+			cout<<"\n\t		City           	: "<<kyc.city;
+			cout<<"\n\t		Old balance    	: "<<kyc.old_balance;
+			cout<<"\n\t		Current payment	: "<<kyc.payment;
+			cout<<"\n\t		New balance    	: "<<kyc.new_balance;
+			cout<<"\n\t		Payment date   	: "<<kyc.date;
+			cout<<"\n\t		B.Outstandings 	: "<<kyc.bill_os; //Bill Outstandingss
 			cout<<"\n\t		Customer status : ";
 		
-			switch(acct_type)
+			switch(kyc.acct_type)
 			{
 				case 'L':
 						cout<<"LOYAL\n\n";
@@ -149,6 +158,7 @@ class Product:public Customer
     public:
     	friend void welcome(int a);
     	friend void placeOrder();
+    	friend class Administration;
     	
         // Reserved Functions, can be used as member functions if necessary
         void adminMenu();
@@ -810,7 +820,7 @@ void Customer::adminSearch(char ch)
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.acct_no == acc_no)
+	        if (cr.kyc.acct_no == acc_no)
 	        {
 	            system("cls");
 	            cr.viewCustomer();
@@ -831,7 +841,7 @@ void Customer::adminSearch(char ch)
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.name == name_s)
+	        if (cr.kyc.name == name_s)
 	        {
 	            system("cls");
 	            cr.viewCustomer();
@@ -887,9 +897,8 @@ void Customer::customerSearch(char ch)
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.acct_no == acc_no)
+	        if (cr.kyc.acct_no == acc_no)
 	        {
-	            system("cls");
 	            cr.viewCustomer();
 	            flag = 1;
 	            cin.get();
@@ -908,9 +917,8 @@ void Customer::customerSearch(char ch)
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.name == name_s)
+	        if (cr.kyc.name == name_s)
 	        {
-	            system("cls");
 	            cr.viewCustomer();
 	            flag = 1;
 	            cin.get();
@@ -978,7 +986,6 @@ void Administration::displaySpecific(int n)
     {
         if (pr.retpno() == n) 
         {
-            system("cls");
             pr.showProduct();
             flag = 1;
             cin.get();
@@ -1007,6 +1014,7 @@ void Administration::modifyProduct()
         if (pr.retpno() == number)
         {
             pr.showProduct();
+            cin.get();
             cout << "\n\n\tPlease Enter The New Details of Product " << endl;
             pr.createProduct();
             long long int pos = -1 * sizeof(pr);
@@ -1020,7 +1028,7 @@ void Administration::modifyProduct()
     fs.close();
     if (found == 0)
         cout << "\n\n Record Not Found ";
-//    cin.get();
+    cin.get();
 }
 
 //****************************************************************
@@ -1043,6 +1051,7 @@ void Administration::deleteProduct()
         {
             fs2.write((char * ) & pr, sizeof(Product));
         }
+        	
     }
     fs2.close();
     fs.close();
@@ -1138,11 +1147,11 @@ void Administration::placeOrder()
 //    fs.read((char * ) & cr, sizeof(Customer));
     while (fs.read((char * ) & cr, sizeof(Customer))) 
 	{
-	    if(cr.acct_no == acc_no)
+	    if(cr.kyc.acct_no == acc_no)
 	    {
-    		cr.bill_os += total;
+    		cr.kyc.bill_os += total;
     		flag = 1;
-    		cout<<"\n\nYour Total Outstanding Bills = "<<cr.bill_os;
+    		cout<<"\n\nYour Total Outstanding Bills = "<<cr.kyc.bill_os;
     		cin.get();
     		fs.write((char * ) & cr, sizeof(Product));
     	}
