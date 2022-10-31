@@ -273,6 +273,7 @@ int main()
         cout<<"\nPlease select only correct option provided.\n\n";
         system("PAUSE");
 //        sleep(5);
+		exit(0);
     }
 //    cin.get();
 //    cin.get();
@@ -285,7 +286,7 @@ int main()
 
 void Administration::welcome(int a)
 {
-	char choice; int status;
+	int choice, status; string choice1;
 	system("cls");
 	try
 	{	
@@ -299,14 +300,16 @@ void Administration::welcome(int a)
         cout<<"4.GO BACK"<<endl;
         cout<<"\nA Project by "<<ad.returnCreator();
         cout<<"\n\nSelect an option to continue (1-4) ";
-        cin>>choice;
+        cin>>choice1;
         cout<<endl;
-    	
-    	if(choice == '1' || choice == '2' || choice == '3' || choice == '4')
+        
+        ss << choice1; ss >> choice;
+    	ss.clear();
+    	if(choice == 1 || choice == 2 || choice == 3 || choice == 4)
 	    {
 	        switch(choice)
         	{
-                case '1':
+                case 1:
                   	status=cs.login();
 					if(status==10)
 					{
@@ -322,15 +325,15 @@ void Administration::welcome(int a)
                         break;
 					}
                     break;
-                case '2':
+                case 2:
                     // cs.registration(a);
                     cs.registrationAdvanced(a);
                     welcome(0);
                     break;
-                case '3':
+                case 3:
                     cs.forgot();
                     break;
-                case '4':
+                case 4:
                 	main();
                 	break;
                         
@@ -341,17 +344,18 @@ void Administration::welcome(int a)
     	}
         else
         {
-        	system("cls");
-        	cout<<"Exception 1";
+        	cout<<"\nException 1\n";
         	throw(10);
 		}
 	}
     catch(int i)
     {
-    	cout<<"Please select only correct option provided.";
-    	sleep(5);
-    	welcome(0);
+    	cout<<"\nPlease select only correct option provided.\n\n";
+        system("PAUSE");
+//        sleep(5);
+		exit(1);
 	}
+	welcome(0);
 }
 
 //****************************************************************
@@ -561,7 +565,7 @@ void Credentials::forgot()
         cin>>choice1;
         
         ss << choice1; ss >> choice;
-        
+        ss.clear();
         switch(choice)
         {
             case 1:
@@ -644,7 +648,7 @@ void Credentials::forgot()
             }
             default:
 	            cout<<"\nException 2";
-	            cout<<"\n\nSorry! Select only from the options. Please try again!\n"<<endl;
+	            cout<<"\n\nSelect only from the options provided. Please try again!\n"<<endl;
 	            cin.get(); cin.get();
 	            throw(10);
             }
@@ -653,9 +657,11 @@ void Credentials::forgot()
     catch(int i)
     {
         cout<<"Please select only the correct option provided.";
-        sleep(5);
-        forgot();
-    }	
+        system("PAUSE");
+//        sleep(5);
+		exit(2);
+    }
+	forgot();
 }
 
 //****************************************************************
@@ -723,7 +729,7 @@ void Customer::adminPage()
 			if(choice == '1' || choice == '2' || choice == '3' || choice == '4')
 		    {
 				adminSearch(choice);
-		//		main();
+				// main();
 				goto search;
 			}
 			else
@@ -736,8 +742,10 @@ void Customer::adminPage()
 		catch(int i)
 	    {
 	    	cout<<"Please select only from the options provided.";
-	    	sleep(5);
-	    	goto search;
+        	system("PAUSE");
+    		// sleep(5);
+			 exit(3);
+//	    	goto search;
 		}	
 	case '3':
 		system("cls");
@@ -795,8 +803,10 @@ void Customer::customerPage()
 		catch(int i)
 	    {
 	    	cout<<"Please select only from the options provided.";
-	    	sleep(5);
-	    	goto search;
+        	system("PAUSE");
+    		// sleep(5);
+			 exit(4);
+//	    	goto search;
 		}
     case '2':
 		ad.placeOrder();
@@ -816,28 +826,33 @@ void Customer::adminSearch(char ch)
 {
 	system("cls");
 	int acc_no, flag;
-	string name_s;
+	string name_s, choice;
 	
 	if(ch == '1')
 	{
-		cout<<"\n\tEnter the Customer Account Number: ";
-		cin>>acc_no;
+		cout<<"\n\tEnter the Customer Account Number: ";	
+		cin>>choice;
+        cout<<endl;
+        
+        ss << choice; ss >> acc_no;
 
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
 	        if (cr.kyc.acct_no == acc_no)
 	        {
-	            system("cls");
 	            cr.viewCustomer();
 	            flag = 1;
 	            cin.get();
         	}
     	}
-	    fs.close();
-	    if (flag == 0)
-	        cout << "\n\n\tRecord does not exist";
-	    cin.get();
+		fs.close();
+		if (flag == 0)
+		{
+			cout << "\n\n\tRecord does not exist";
+			cin.get();
+			cin.get();
+		}
 	}	
 	else if(ch == '2')
 	{
@@ -893,12 +908,15 @@ void Customer::customerSearch(char ch)
 {
 	system("cls");
 	int acc_no, flag;
-	string name_s;
+	string name_s, choice;
 	
 	if(ch == '1')
 	{
-		cout<<"\n\tEnter the Customer Account Number: ";
-		cin>>acc_no;
+		cout<<"\n\tEnter the Customer Account Number: ";	
+		cin>>choice;
+        cout<<endl;
+        
+        ss << choice; ss >> acc_no;
 
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
@@ -910,10 +928,13 @@ void Customer::customerSearch(char ch)
 	            cin.get();
         	}
     	}
-    fs.close();
-    if (flag == 0)
-        cout << "\n\n\tRecord does not exist";
-    cin.get();
+		fs.close();
+		if (flag == 0)
+		{
+			cout << "\n\n\tRecord does not exist";
+			cin.get();
+			cin.get();
+		}
 	}	
 	else if(ch == '2')
 	{
@@ -1078,8 +1099,8 @@ void Product::productMenu()
     if (!fs) 
     {
         cout << "\n\n\nERROR!!! FILE COULD NOT BE OPENED\n\n\nGo To Admin Menu to Create New File";
-        cout << "\n\n\nProgram is closing ....";
-        exit(0);
+        cin.get();
+        pr.adminMenu();
     }
     cin.get();
 
