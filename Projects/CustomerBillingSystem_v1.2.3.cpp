@@ -1,12 +1,14 @@
 /*
-Title - CUSTOMER BILLING SYSTEM (Project Version 1.2) && Submission Date - October 31, 2022
+Title - CUSTOMER BILLING SYSTEM (Project Version 1.2.3) && Submission Date - October 31, 2022
 A Project by SRI VISHNU JSB
+Customer Billing System on GitHub for latest version - https://github.com/SRIVISHNU-JSB/CSE233/tree/main/Projects
 */
 
 /*
 HOW TO USE THIS PROGRAM?
-1.First we need to create Admin and Customer Account(s) using Registration functions
-2.We will have to add the customer accounts
+0.Ensure to take a look at the wireframe files attached to understand the overall architecture/blocks of this program
+1.First we need to create Administrator and Customer Account(s) using Registration functions
+2.We will have to add the customer accounts and their various information as necessary
 3.We need to create the products using Admin account and verify the list of products created
 4.Login using Customer account and confirm the customer details and place an order
 5.As an admin account verify the balance sheet/ customer information for new the Bill Outstandings
@@ -17,21 +19,21 @@ HOW TO USE THIS PROGRAM?
 #include<sstream>
 #include<string>
 #include<stdlib.h>
-#include<unistd.h>
+#include<unistd.h> //Required for running this code in Unix like OS systems
 
 using namespace std;
 
-void intro();
+void introduction();
 
 // Class for introduction and various functions
 class Administration
 {
-	string creator = "SRI VISHNU JSB";
+	string developer = "SRI VISHNU JSB";
 
     int number, flag, found;
 
     public:
-    	friend void intro();
+    	friend void introduction();
     	
 		void welcome(int a);
 		void writeCustomer();
@@ -43,7 +45,7 @@ class Administration
 
         string returnCreator()
         {
-        	return creator;
+        	return developer;
 		}
 };
 
@@ -52,7 +54,7 @@ class Credentials
 {
     private:
         int count=0;
-        string user,pass,u,p,a,admin;
+        string user,pass,u,p,a,privilege;
     
     public:
         int login();
@@ -153,7 +155,7 @@ class Product:public Customer
     int pno, acc_no, flag = 0, c = 0;
     int order_arr[50], quan[50];
     float price, qty, tax, dis, amt, damt, total = 0;
-    char ch = 'Y', ch2;
+    char ch, ch2;
     string name;
 
     public:
@@ -213,6 +215,7 @@ class Product:public Customer
 int Customer::counter=100;
 
 fstream fs;
+stringstream ss;
 Administration ad;
 Credentials cs;
 Customer cr;
@@ -225,10 +228,10 @@ Product pr;
 int main()
 {
     int choice; string choice1;
-    stringstream ss;
+    // stringstream ss;
     
     system("cls");
-    intro();
+    introduction();
     try
     {
         do
@@ -245,8 +248,8 @@ int main()
             cout<<"\nPlease select your option (1-3) ";
             cin>>choice1;
 			
-			ss << choice1; ss >> choice;
-			
+			ss << choice1; ss >> choice; //Type casting if any other values entered other than numbers.
+			ss.clear();
             if(choice == 1)
                 ad.welcome(1);
             else if(choice == 2)
@@ -260,7 +263,7 @@ int main()
             else
             {
 //              system("cls");
-                cout<<"\nException!!!\n";
+                cout<<"\nException 0\n";
                 throw(10);
             }
         } while (choice !=3);
@@ -339,7 +342,7 @@ void Administration::welcome(int a)
         else
         {
         	system("cls");
-        	cout<<"Exception";
+        	cout<<"Exception 1";
         	throw(10);
 		}
 	}
@@ -358,7 +361,7 @@ void Administration::welcome(int a)
 int Credentials::login()
 {
     int count;
-    string user,pass,u,p,a,admin;
+    string user,pass,u,p,a,privilege;
     system("cls");
     cout<<"\nPlease enter your username and password"<<endl;
     cout<<"USERNAME: ";
@@ -367,15 +370,15 @@ int Credentials::login()
     cin>>pass;
     
     ifstream read("login_database.txt",ios ::in);
-    while(read>>u>>p>>admin)
+    while(read>>u>>p>>privilege)
     {
-            if(u==user && p==pass && admin == "Y")
+            if(u==user && p==pass && privilege == "A")
             {
                 count=10;
                 system("cls");
             }
             
-            else if(u==user && p==pass && admin == "N")
+            else if(u==user && p==pass && privilege == "C")
             {
                 count=20;
                 system("cls");
@@ -413,7 +416,8 @@ int Credentials::login()
 
 void Credentials::registration(int a)
 {  
-    string reguser,regpass,ru,rp,admin;
+    string reguser,regpass,ru,rp;
+	char ch, privilege;
     system("cls");
     cout<<"Enter the username: ";
     cin>>reguser;
@@ -422,17 +426,18 @@ void Credentials::registration(int a)
     if(a==1)
     {
         cout<<"Please confirm you are an admin user? Y/N ";
-        cin>>admin;
-        admin="Y";
-    }
-    else
-        admin="N";
+        cin>>ch;
+     	if(ch == 'Y' ||  ch == 'y')
+	    	privilege='A';
+	    else
+            privilege='C';
+	}
     
     ofstream reg("login_database.txt",ios :: app);
-    reg<<reguser<<' '<<regpass<<' '<<admin<<endl;
+    reg<<reguser<<' '<<regpass<<' '<<privilege<<endl;
     cout<<"\nRegistration Successful\n";
     system("cls");
-    ad.welcome(0);           
+    ad.welcome(0);
 }
 
 // Aleternative Advanced method for user registration
@@ -441,7 +446,7 @@ void Credentials::registrationAdvanced(int a)
 {
     string new_username,validate_name,new_password,confirm_password,search_user,search_pass;
 	int minimum_size;
-	char ch;
+	char ch, privilege;
 	
 	bool registration_status = false;
 	bool status = true;
@@ -457,7 +462,7 @@ void Credentials::registrationAdvanced(int a)
 	    getline(cin>>ws, new_username);
 	    minimum_size = new_username.length();
 	
-	    fstream read("login_database.txt",ios ::in);
+	    fstream read("login_database.txt",ios::in);
 	    if(minimum_size >= 3)
 	    {
 	        if(read && registration_status != true && read.is_open())
@@ -508,14 +513,15 @@ void Credentials::registrationAdvanced(int a)
 			if(a==1)
 	        {
 	            cout<<"Please confirm you are an admin user? Y/N ";
-	            cin>>admin;
-//	            admin="Y";
+	            cin>>ch;
+	            if(ch=='Y' || ch=='y')
+	            	privilege='A';
 	        }
 	        else
-            	admin="N";
+				privilege='C';
             
 	        if(reg.is_open()){
-	            reg << new_username +" "+ new_password + " "+admin<< endl;
+	            reg << new_username +" "+ new_password + " "+privilege<< endl;
 	            reg.close();
 	        }
 	        cout << "\n===================================\n";
@@ -543,7 +549,6 @@ void Credentials::forgot()
 	int choice, count;
     string search_user,su,sp;
     string search_pass,su2,sp2, choice1;
-    stringstream ss;
     
     system("cls");
     try
@@ -638,7 +643,7 @@ void Credentials::forgot()
                 break;
             }
             default:
-	            cout<<"\nException!!!";
+	            cout<<"\nException 2";
 	            cout<<"\n\nSorry! Select only from the options. Please try again!\n"<<endl;
 	            cin.get(); cin.get();
 	            throw(10);
@@ -724,7 +729,7 @@ void Customer::adminPage()
 			else
 		    {
 		    	system("cls");
-		    	cout<<"Exception";
+		    	cout<<"Exception 3";
 		    	throw(10);	
 			}
 		}
@@ -783,7 +788,7 @@ void Customer::customerPage()
 			else
 		    {
 		    	system("cls");
-		    	cout<<"Exception";
+		    	cout<<"Exception 4";
 		    	throw(10);
 			}
 		}
@@ -1072,8 +1077,8 @@ void Product::productMenu()
     fs.open("shopping_database.txt", ios::in );
     if (!fs) 
     {
-        cout << "\n\n\nERROR!!! FILE COULD NOT BE OPEN\n\n\n Go To Admin Menu to create File ";
-        cout << "\n\n\n Program is closing ....";
+        cout << "\n\n\nERROR!!! FILE COULD NOT BE OPENED\n\n\nGo To Admin Menu to Create New File";
+        cout << "\n\n\nProgram is closing ....";
         exit(0);
     }
     cin.get();
@@ -1099,7 +1104,7 @@ void Administration::placeOrder()
 {
 	int order_arr[50], quan[50], acc_no, c = 0, flag = 0;
     float amt, damt, total = 0;
-    char ch = 'Y';
+    char ch;
     
 	cout<<"\nEnter your Customer Account Number: ";
 	cin>>acc_no;
@@ -1168,12 +1173,12 @@ void Administration::placeOrder()
 // INTRODUCTION FUNCTION
 //****************************************************************
 
-void intro()
+void introduction()
 {
     system("cls");
     
     cout <<"\n\n\n";
-	cout<<"\t  ADVANCED CUSTOMER BILLING SYSTEM by "<<ad.creator;
+	cout<<"\t\t  CUSTOMER BILLING SYSTEM by "<<ad.developer;
 	cout<<"\n\n\n";
  
 //    cin.get();
