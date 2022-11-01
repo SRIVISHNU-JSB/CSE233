@@ -64,7 +64,7 @@ class Credentials
         string new_user, new_pass, valid_name, confirm_pass;
         string search_user, search_pass, search_user_2,search_pass_2, selection, privilege;
  
-        bool status = true;
+        bool check_status = true;
         bool registration_status = false;
     
     public:
@@ -452,13 +452,15 @@ void Credentials::registration(int a)
 
 void Credentials::registrationAdvanced(int a)
 {
+    bool check_status = true;
+
 	system("cls");
     cout << "\n===================================\n";
 	cout << "\n   **** Create New Account **** \n";
     cout << "\n===================================\n";
 	
     //username Validation
-    while(status)
+    while(check_status)
     {
         cout << "Enter Your Username: ";
 	    getline(cin>>ws, new_user);
@@ -486,11 +488,11 @@ void Credentials::registrationAdvanced(int a)
 	            }
 	            else
 	            {
-	                status = false;
+	                check_status = false;
 	            }
 	        }
 	        else
-        		status = false;
+        		check_status = false;
 		}
     }
 	
@@ -853,7 +855,7 @@ void Customer::adminSearch(char option)
 	{
 		cout<<"\n\tEnter the Customer Account Name: ";
 		getline(cin>>ws,search_name);
-		cout<<search_name;
+
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
