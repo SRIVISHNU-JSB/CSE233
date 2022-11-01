@@ -1254,3 +1254,7 @@ void Product::adminMenu()
     }
     adminMenu();
 }
+
+/*
+Thank you!
+*/
