@@ -1,5 +1,5 @@
 /*
-Title - CUSTOMER BILLING SYSTEM (Project Version 1.2.3) && Submission Date - October 31, 2022
+Title - CUSTOMER BILLING SYSTEM (Project Version 1.2.3) && Submission Date - November 01, 2022
 A Project by SRI VISHNU JSB
 CBS on GitHub for latest version - https://github.com/SRIVISHNU-JSB/CSE233/tree/main/Projects
 */
@@ -31,11 +31,10 @@ class Administration
 	string developer = "SRI VISHNU JSB";
     
     int order_array[50], quantity[50];
-    int flag, found, counter, status, search_number, account_number, account_number_2;
+    int flag, found, counter, status, search_number, account_number;
     float amount, discount_amount, total; string chosen;
     char choice;
     
-
     public:
     	friend void introduction();
     	
@@ -162,7 +161,7 @@ class Customer: public Administration
 };
 
 // class for managing the products and billing related functions
-class Product:public Customer
+class Product: public Customer
 {
     int product_number, account_number, flag = 0, counter = 0;
     int order_array[50], quantity[50];
@@ -822,6 +821,7 @@ void Customer::customerPage()
 void Customer::adminSearch(char option)
 {
 	system("cls");
+	int search_number; string search_name;
 	
 	if(option == '1')
 	{
@@ -832,9 +832,9 @@ void Customer::adminSearch(char option)
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-            
 	        if (cr.kyc.account_number == search_number)
 	        {
+//	        	system("cls");
 	            cr.viewCustomer();
 	            flag = 1;
 	            cin.get();
@@ -853,13 +853,13 @@ void Customer::adminSearch(char option)
 	{
 		cout<<"\n\tEnter the Customer Account Name: ";
 		getline(cin>>ws,search_name);
-		
+		cout<<search_name;
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
 	        if (cr.kyc.name == search_name)
 	        {
-	            system("cls");
+//	            system("cls");
 	            cr.viewCustomer();
 	            flag = 1;
 	            cin.get();
@@ -902,6 +902,7 @@ void Customer::adminSearch(char option)
 void Customer::customerSearch(char option)
 {
 	system("cls");
+	int search_number; string search_name;
 	
 	if(option == '1')
 	{
@@ -1117,7 +1118,7 @@ void Administration::placeOrder()
 {
     system("cls");
 	cout<<"\nEnter your Customer Account Number: ";
-	cin>>account_number;
+	cin>>search_number;
     pr.productMenu();
     cout << "\n====================================================";
     cout << "\n\t\t PLACE YOUR ORDER";
@@ -1163,7 +1164,7 @@ void Administration::placeOrder()
 //    fs.read((char * ) & cr, sizeof(Customer));
     while (fs.read((char * ) & cr, sizeof(Customer))) 
 	{
-	    if(cr.kyc.account_number == account_number)
+	    if(cr.kyc.account_number == search_number)
 	    {
     		cr.kyc.bill_dues += total;
     		flag = 1;
