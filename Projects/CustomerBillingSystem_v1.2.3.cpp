@@ -1,7 +1,7 @@
 /*
 Title - CUSTOMER BILLING SYSTEM (Project Version 1.2.3) && Submission Date - October 31, 2022
 A Project by SRI VISHNU JSB
-Customer Billing System on GitHub for latest version - https://github.com/SRIVISHNU-JSB/CSE233/tree/main/Projects
+CBS on GitHub for latest version - https://github.com/SRIVISHNU-JSB/CSE233/tree/main/Projects
 */
 
 /*
@@ -29,8 +29,12 @@ void introduction();
 class Administration
 {
 	string developer = "SRI VISHNU JSB";
-
-    int number, flag, found;
+    
+    int order_array[50], quantity[50];
+    int flag, found, counter, status, search_number, account_number, account_number_2;
+    float amount, discount_amount, total; string chosen;
+    char choice;
+    
 
     public:
     	friend void introduction();
@@ -53,8 +57,16 @@ class Administration
 class Credentials
 {
     private:
-        int count=0;
-        string user,pass,u,p,a,privilege;
+        int minimum_size; // For custom length of the username/password
+        int count = 0, choice;
+        char chosen;
+        
+        string user, pass, user_2, pass_2;
+        string new_user, new_pass, valid_name, confirm_pass;
+        string search_user, search_pass, search_user_2,search_pass_2, selection, privilege;
+ 
+        bool status = true;
+        bool registration_status = false;
     
     public:
         int login();
@@ -66,20 +78,20 @@ class Credentials
 // struct for storing customer specific information
 struct customer
 {
-	char acct_type;
-	int acct_no, mobile_no;
+	char account_type;
+	int account_number, contact_number;
 	string name, street, city, date;
-	float old_balance, new_balance, payment, bill_os;
+	float old_balance, new_balance, payment, bill_dues;
 };
 
 // class for managing all the customer related information 
-class Customer:public Credentials
+class Customer: public Administration
 {
+    customer kyc; // Customer object using struct method
     static int counter;
+    int i, n, search_number, flag;
+	string search_name, chosen;
     char choice;
-    customer kyc;
-    string name_s;
-    int i, n, flag = 0;
     
 	public:
 		friend class Product;
@@ -88,8 +100,8 @@ class Customer:public Credentials
 		
         void adminPage();
         void customerPage();
-        void adminSearch(char ch);
-        void customerSearch(char ch);
+        void adminSearch(char chosen);
+        void customerSearch(char chosen);
         
         void createCustomer()
         {
@@ -97,22 +109,22 @@ class Customer:public Credentials
 
             cout<<"\n\n\t\t	Entry Number	: "<<counter;
             cout<<"\n\n\t\t	Name		: "; getline(cin>>ws,kyc.name);
-			cout<<"\n\t		Contact Number  : "; cin>>kyc.mobile_no;
-			cout<<"\n\t		Account Number 	: "; cin>>kyc.acct_no;
+			cout<<"\n\t		Contact Number  : "; cin>>kyc.contact_number;
+			cout<<"\n\t		Account Number 	: "; cin>>kyc.account_number;
 			cout<<"\n\t		Street         	: "; getline(cin>>ws,kyc.street);
 			cout<<"\n\t		City           	: "; getline(cin>>ws,kyc.city);
 			cout<<"\n\t		Old balance    	: "; cin>>kyc.old_balance;
 			cout<<"\n\t		Current payment	: "; cin>>kyc.payment;
 			cout<<"\n\t		Payment date   	: "; cin>>kyc.date;
-			cout<<"\n\t		B.Outstandings 	: "; cin>>kyc.bill_os; //Bill Outstandingss
+			cout<<"\n\t		B.Outstandings 	: "; cin>>kyc.bill_dues; //Bill Outstandingss
 		  
             if(kyc.payment>0)
             {
-                kyc.acct_type=(kyc.payment<kyc.old_balance)? 'O' : 'L';
+                kyc.account_type=(kyc.payment<kyc.old_balance)? 'O' : 'L';
             }
             else
             {
-                kyc.acct_type=(kyc.old_balance>0)? 'O' : 'P';
+                kyc.account_type=(kyc.old_balance>0)? 'O' : 'P';
             }
             kyc.new_balance=kyc.old_balance - kyc.payment;
         }
@@ -121,18 +133,18 @@ class Customer:public Credentials
 		{
 		//	cout<<"\n\n\t	Serial Number: "<<serial_number;
 			cout<<"\n\n\t\t	Name		: "<<kyc.name;
-			cout<<"\n\t		Contact Number  : "<<kyc.mobile_no;
-			cout<<"\n\t		Account Number 	: "<<kyc.acct_no;
+			cout<<"\n\t		Contact Number  : "<<kyc.contact_number;
+			cout<<"\n\t		Account Number 	: "<<kyc.account_number;
 			cout<<"\n\t		Street         	: "<<kyc.street;
 			cout<<"\n\t		City           	: "<<kyc.city;
 			cout<<"\n\t		Old balance    	: "<<kyc.old_balance;
 			cout<<"\n\t		Current payment	: "<<kyc.payment;
 			cout<<"\n\t		New balance    	: "<<kyc.new_balance;
 			cout<<"\n\t		Payment date   	: "<<kyc.date;
-			cout<<"\n\t		B.Outstandings 	: "<<kyc.bill_os; //Bill Outstandingss
+			cout<<"\n\t		B.Outstandings 	: "<<kyc.bill_dues; //Bill Outstandingss
 			cout<<"\n\t		Customer status : ";
 		
-			switch(kyc.acct_type)
+			switch(kyc.account_type)
 			{
 				case 'L':
 						cout<<"LOYAL\n\n";
@@ -152,11 +164,11 @@ class Customer:public Credentials
 // class for managing the products and billing related functions
 class Product:public Customer
 {
-    int pno, acc_no, flag = 0, c = 0;
-    int order_arr[50], quan[50];
-    float price, qty, tax, dis, amt, damt, total = 0;
-    char ch, ch2;
-    string name;
+    int product_number, account_number, flag = 0, counter = 0;
+    int order_array[50], quantity[50];
+
+    float price, tax, discount, amount, discount_amount, total = 0;
+    char choice; string product_name, chosen;
 
     public:
     	friend void welcome(int a);
@@ -171,24 +183,24 @@ class Product:public Customer
 		
         void createProduct()
         {
-            cout << "\n\n\tPlease Enter The Product Number for The Product: "; cin >> pno;
-            cout << "\n\tPlease Enter The Name of The Product: "; getline(cin>>ws,name);
+            cout << "\n\n\tPlease Enter The Product Number for The Product: "; cin >> product_number;
+            cout << "\n\tPlease Enter The Name of The Product: "; getline(cin>>ws,product_name);
             cout << "\n\tPlease Enter The Price of The Product: "; cin >> price;
-            cout << "\n\tPlease Enter The Discount(%): "; cin >> dis;
+            cout << "\n\tPlease Enter The Discount(%): "; cin >> discount;
         }
 
         void showProduct() 
         {
-            cout << "\n\tThe Product Number of The Product: " << pno;
-            cout << "\n\tThe Name of The Product: "<< name;
+            cout << "\n\tThe Product Number of The Product: " << product_number;
+            cout << "\n\tThe Name of The Product: "<< product_name;
             cout << "\n\tThe Price of The Product: " << price;
-            cout << "\n\tDiscount : " << dis;
+            cout << "\n\tDiscount : " << discount;
             cout << "\n";
         }
 
         int retpno() 
         {
-            return pno;
+            return product_number;
         }
 
         float retprice() 
@@ -198,12 +210,12 @@ class Product:public Customer
 
         string retname() 
         {
-            return name;
+            return product_name;
         }
 
         int retdis() 
         {
-            return dis;
+            return discount;
         }
 
 }; //class ends here
@@ -227,8 +239,7 @@ Product pr;
 
 int main()
 {
-    int choice; string choice1;
-    // stringstream ss;
+    int choice; string selection;
     
     system("cls");
     introduction();
@@ -246,9 +257,9 @@ int main()
             cout<<"2.CUSTOMER"<<endl;
             cout<<"3.EXIT"<<endl;
             cout<<"\nPlease select your option (1-3) ";
-            cin>>choice1;
+            cin>>selection;
 			
-			ss << choice1; ss >> choice; //Type casting if any other values entered other than numbers.
+			ss << selection; ss >> choice; //Type casting if any other values entered other than numbers.
 			ss.clear();
             if(choice == 1)
                 ad.welcome(1);
@@ -286,7 +297,6 @@ int main()
 
 void Administration::welcome(int a)
 {
-	int choice, status; string choice1;
 	system("cls");
 	try
 	{	
@@ -300,40 +310,39 @@ void Administration::welcome(int a)
         cout<<"4.GO BACK"<<endl;
         cout<<"\nA Project by "<<ad.returnCreator();
         cout<<"\n\nSelect an option to continue (1-4) ";
-        cin>>choice1;
+        cin>>chosen;
         cout<<endl;
         
-        ss << choice1; ss >> choice;
+        ss << chosen; ss >> choice;
     	ss.clear();
-    	if(choice == 1 || choice == 2 || choice == 3 || choice == 4)
+    	if(choice == '1' || choice == '2' || choice == '3' || choice == '4')
 	    {
 	        switch(choice)
         	{
-                case 1:
+                case '1':
                   	status=cs.login();
 					if(status==10)
 					{
-						// cr.adminPage();
+                        system("cls");
                         pr.adminMenu();
                         break;
 					}
 					else if(status==20)
 					{
-						// cr.customerPage();
                         system("cls");
                         cr.customerPage();
                         break;
 					}
                     break;
-                case 2:
+                case '2':
                     // cs.registration(a);
                     cs.registrationAdvanced(a);
                     welcome(0);
                     break;
-                case 3:
+                case '3':
                     cs.forgot();
                     break;
-                case 4:
+                case '4':
                 	main();
                 	break;
                         
@@ -364,8 +373,6 @@ void Administration::welcome(int a)
 
 int Credentials::login()
 {
-    int count;
-    string user,pass,u,p,a,privilege;
     system("cls");
     cout<<"\nPlease enter your username and password"<<endl;
     cout<<"USERNAME: ";
@@ -374,15 +381,15 @@ int Credentials::login()
     cin>>pass;
     
     ifstream read("login_database.txt",ios ::in);
-    while(read>>u>>p>>privilege)
+    while(read>>user_2>>pass_2>>privilege)
     {
-            if(u==user && p==pass && privilege == "A")
+            if(user_2==user && pass_2==pass && privilege == "A")
             {
                 count=10;
                 system("cls");
             }
             
-            else if(u==user && p==pass && privilege == "C")
+            else if(user_2==user && pass_2==pass && privilege == "C")
             {
                 count=20;
                 system("cls");
@@ -420,25 +427,23 @@ int Credentials::login()
 
 void Credentials::registration(int a)
 {  
-    string reguser,regpass,ru,rp;
-	char ch, privilege;
     system("cls");
     cout<<"Enter the username: ";
-    cin>>reguser;
+    cin>>new_user;
     cout<<"\nEnter the password: ";
-    cin>>regpass;
+    cin>>new_pass;
     if(a==1)
     {
         cout<<"Please confirm you are an admin user? Y/N ";
-        cin>>ch;
-     	if(ch == 'Y' ||  ch == 'y')
+        cin>>chosen;
+     	if(chosen == 'Y' ||  chosen == 'y')
 	    	privilege='A';
 	    else
             privilege='C';
 	}
     
     ofstream reg("login_database.txt",ios :: app);
-    reg<<reguser<<' '<<regpass<<' '<<privilege<<endl;
+    reg<<new_user<<' '<<new_pass<<' '<<privilege<<endl;
     cout<<"\nRegistration Successful\n";
     system("cls");
     ad.welcome(0);
@@ -448,12 +453,6 @@ void Credentials::registration(int a)
 
 void Credentials::registrationAdvanced(int a)
 {
-    string new_username,validate_name,new_password,confirm_password,search_user,search_pass;
-	int minimum_size;
-	char ch, privilege;
-	
-	bool registration_status = false;
-	bool status = true;
 	system("cls");
     cout << "\n===================================\n";
 	cout << "\n   **** Create New Account **** \n";
@@ -463,21 +462,21 @@ void Credentials::registrationAdvanced(int a)
     while(status)
     {
         cout << "Enter Your Username: ";
-	    getline(cin>>ws, new_username);
-	    minimum_size = new_username.length();
+	    getline(cin>>ws, new_user);
+	    minimum_size = new_user.length();
 	
 	    fstream read("login_database.txt",ios::in);
 	    if(minimum_size >= 3)
 	    {
 	        if(read && registration_status != true && read.is_open())
 	        {
-	            while(read>>search_user>>search_pass>>ch)
+	            while(read>>search_user>>search_pass>>chosen)
 	            {
 	                stringstream users(search_user);
-	                users >> validate_name;
-	                if(new_username == validate_name)
+	                users >> valid_name;
+	                if(new_user == valid_name)
 	                {
-	                    cout <<"\n*"<< new_username <<"* username already exists! Please try another username.\n" << endl;
+	                    cout <<"\n*"<< new_user <<"* username already exists! Please try another username.\n" << endl;
 	                    registration_status = true;
 	                } 
 	            }
@@ -500,16 +499,16 @@ void Credentials::registrationAdvanced(int a)
 	while(true)
 	{
 	    cout << "Enter Your password: ";
-	    getline(cin>>ws,new_password);
+	    getline(cin>>ws,new_pass);
 	    cout << "Confirm Your password: ";
-	    getline(cin>>ws,confirm_password);
-	    minimum_size = new_password.length();
+	    getline(cin>>ws,confirm_pass);
+	    minimum_size = new_pass.length();
 	
 	    if (minimum_size < 3)
 		{
 	        cout << "\nYour password is weak, Enter at least 3 letters\n \n";
 	    }
-	    else if(confirm_password == new_password)
+	    else if(confirm_pass == new_pass)
 		{
 	        fstream reg;
 	        reg.open("login_database.txt",fstream::app);
@@ -517,15 +516,17 @@ void Credentials::registrationAdvanced(int a)
 			if(a==1)
 	        {
 	            cout<<"Please confirm you are an admin user? Y/N ";
-	            cin>>ch;
-	            if(ch=='Y' || ch=='y')
+	            cin>>chosen;
+	            if(chosen=='Y' || chosen=='y')
 	            	privilege='A';
+                else
+                    privilege='C';
 	        }
 	        else
 				privilege='C';
             
 	        if(reg.is_open()){
-	            reg << new_username +" "+ new_password + " "+privilege<< endl;
+	            reg << new_user +" "+ new_pass + " "+privilege<< endl;
 	            reg.close();
 	        }
 	        cout << "\n===================================\n";
@@ -549,11 +550,6 @@ void Credentials::registrationAdvanced(int a)
 
 void Credentials::forgot()
 {
-    char ch; 
-	int choice, count;
-    string search_user,su,sp;
-    string search_pass,su2,sp2, choice1;
-    
     system("cls");
     try
     {
@@ -562,9 +558,9 @@ void Credentials::forgot()
         cout<<"2.Search your id by password"<<endl;
         cout<<"3.Go back\n"<<endl;
         cout<<"Enter your choice: ";
-        cin>>choice1;
+        cin>>selection;
         
-        ss << choice1; ss >> choice;
+        ss << selection; ss >> choice;
         ss.clear();
         switch(choice)
         {
@@ -574,10 +570,10 @@ void Credentials::forgot()
                 cin>>search_user;
                 
                 ifstream read("login_database.txt",ios :: in);
-                while(read>>su>>sp>>ch)
+                while(read>>search_user_2>>search_pass_2>>chosen)
                 {
 
-                    if(su==search_user)
+                    if(search_user_2==search_user)
                     {
                         count=1;
                         break;
@@ -587,7 +583,7 @@ void Credentials::forgot()
                 if(count==1)
                 {
                     cout<<"\n\nHurrah, account found\n";
-                    cout<<"\nYour password is "<<sp;
+                    cout<<"\nYour password is "<<search_pass_2;
                     cin.get();
                     cin.get();
                     system("cls");
@@ -610,10 +606,10 @@ void Credentials::forgot()
                 cin>>search_pass;
 
 				fstream read("login_database.txt",ios :: in);
-                while(read>>su2>>sp2>>ch)
+                while(read>>search_user_2>>search_pass_2>>chosen)
                 {
                 	
-                    if(sp2==search_pass)
+                    if(search_pass_2==search_pass)
                     {
                         count=1;
                         break;
@@ -623,7 +619,7 @@ void Credentials::forgot()
                 if(count==1)
                 {
                     cout<<"\nYour password is found in the database.\n";
-                    cout<<"\nYour Id is : "<<su2;
+                    cout<<"\nYour Id is : "<<search_user_2;
                     cin.get();
                     cin.get();
                     system("cls");
@@ -686,8 +682,6 @@ void Administration::writeCustomer()
 
 void Customer::adminPage()
 {
-	int i, n;
-	char choice;
 	system("cls");
 	cout<<"\n==============================================================\n";
 	cout<<"\n\t\tCUSTOMER BILLING SYSTEM\n";
@@ -698,7 +692,10 @@ void Customer::adminPage()
 	cout<<"\n==============================================================\n";
 
   	cout<<"\nSelect what do you want to do? (1-3) ";
-   	cin>>choice;
+   	cin>>chosen;
+
+    ss << chosen; ss >> choice;
+    ss.clear();
 
 	switch(choice)
 	{
@@ -725,7 +722,7 @@ void Customer::adminPage()
 				cout<<"\t4:\tGo back\n";
 				cout<<"\n\tPlease enter your choice (1-4) ";
 				cin>>choice;
-	//		}while(ch<=0 || ch>4);
+	//		}while(choice<=0 || choice>4);
 			if(choice == '1' || choice == '2' || choice == '3' || choice == '4')
 		    {
 				adminSearch(choice);
@@ -786,12 +783,12 @@ void Customer::customerPage()
 				cout<<"\t3:\tGo back\n";
 				cout<<"\n\tPlease enter your choice (1-3) ";
 				cin>>choice;
-	//		}while(ch<=0 || ch>3);
+	//		}while(choice<=0 || choice>3);
 			if(choice == '1' || choice == '2' || choice == '3' || choice == '4')
 		    {
 				cr.customerSearch(choice); // Calling the function to search the customers_database.txt file
 				
-                goto search; // Goback to search line again and continue.
+                goto search; // Go back to search line again and continue.
 			}
 			else
 		    {
@@ -822,27 +819,25 @@ void Customer::customerPage()
 // function to search Customer Records for Admin users
 //****************************************************************
 
-void Customer::adminSearch(char ch)
+void Customer::adminSearch(char option)
 {
 	system("cls");
-	int acc_no, flag;
-	string name_s, choice;
 	
-	if(ch == '1')
+	if(option == '1')
 	{
 		cout<<"\n\tEnter the Customer Account Number: ";	
-		cin>>choice;
+		cin>>search_number;
         cout<<endl;
-        
-        ss << choice; ss >> acc_no;
 
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.kyc.acct_no == acc_no)
+            
+	        if (cr.kyc.account_number == search_number)
 	        {
 	            cr.viewCustomer();
 	            flag = 1;
+	            cin.get();
 	            cin.get();
         	}
     	}
@@ -854,15 +849,15 @@ void Customer::adminSearch(char ch)
 			cin.get();
 		}
 	}	
-	else if(ch == '2')
+	else if(option == '2')
 	{
 		cout<<"\n\tEnter the Customer Account Name: ";
-		getline(cin>>ws,name_s);
+		getline(cin>>ws,search_name);
 		
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.kyc.name == name_s)
+	        if (cr.kyc.name == search_name)
 	        {
 	            system("cls");
 	            cr.viewCustomer();
@@ -875,12 +870,12 @@ void Customer::adminSearch(char ch)
 	        cout << "\n\n\tRecord does not exist";
 	    cin.get();
 	}
-	else if(ch == '3')
+	else if(option == '3')
 	{
 		system("cls");
 	    cout << "\n\n\t\t\tDISPLAY ALL RECORD !!!\n\n";
 	    fs.open("customers_database.txt", ios :: in );
-	    while (fs.read((char * ) & cr, sizeof(Customer))) 
+	    while (fs.read((char * ) & cr, sizeof(Customer)))
 	    {
 	        cr.viewCustomer();
             flag = 1;
@@ -892,7 +887,7 @@ void Customer::adminSearch(char ch)
 	    cin.get();
 	    cin.get();
 	}
-    else if(ch == '4')
+    else if(option == '4')
     {
         cr.adminPage();
     }
@@ -904,27 +899,24 @@ void Customer::adminSearch(char ch)
 // function to search customer records for Customers
 //****************************************************************
 
-void Customer::customerSearch(char ch)
+void Customer::customerSearch(char option)
 {
 	system("cls");
-	int acc_no, flag;
-	string name_s, choice;
 	
-	if(ch == '1')
+	if(option == '1')
 	{
 		cout<<"\n\tEnter the Customer Account Number: ";	
-		cin>>choice;
+		cin>>search_number;
         cout<<endl;
-        
-        ss << choice; ss >> acc_no;
 
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.kyc.acct_no == acc_no)
+	        if (cr.kyc.account_number == search_number)
 	        {
 	            cr.viewCustomer();
 	            flag = 1;
+	            cin.get();
 	            cin.get();
         	}
     	}
@@ -936,15 +928,15 @@ void Customer::customerSearch(char ch)
 			cin.get();
 		}
 	}	
-	else if(ch == '2')
+	else if(option == '2')
 	{
 		cout<<"\n\tEnter the Customer Account Name: ";
-		getline(cin>>ws,name_s);
+		getline(cin>>ws,search_name);
 		
 		fs.open("customers_database.txt", ios :: in );
 	    while (fs.read((char * ) & cr, sizeof(Customer))) 
 	    {
-	        if (cr.kyc.name == name_s)
+	        if (cr.kyc.name == search_name)
 	        {
 	            cr.viewCustomer();
 	            flag = 1;
@@ -956,7 +948,7 @@ void Customer::customerSearch(char ch)
 	        cout << "\n\n\tRecord does not exist";
 	    cin.get();
 	}
-	else if(ch == '3')
+	else if(option == '3')
 		customerPage();
 }
 
@@ -967,9 +959,9 @@ void Customer::customerSearch(char ch)
 void Administration::writeProduct()
 {
     cout<<"\n\tHow many Products to create? ";
-	cin>>number;
+	cin>>counter;
 		
-	for(int i=0;i<number;i++)
+	for(int i=0;i<counter;i++)
 	{		
 		fs.open("shopping_database.txt", ios ::out | ios ::app);
     	pr.createProduct();
@@ -980,7 +972,7 @@ void Administration::writeProduct()
 
     cout << "\n\nThe Product(s) Created Successfully.";
     cin.get();
-    cin.get();
+    // cin.get();
 }
 
 //****************************************************************
@@ -1034,11 +1026,11 @@ void Administration::modifyProduct()
     system("cls");
     cout << "\n\n\t\tModify Record";
     cout << "\n\n\tPlease Enter The Product Number of Product: ";
-    cin >> number;
+    cin >> search_number;
     fs.open("shopping_database.txt", ios::in | ios::out);
     while (fs.read((char * ) & pr, sizeof(Product)) && found == 0) 
     {
-        if (pr.retpno() == number)
+        if (pr.retpno() == search_number)
         {
             pr.showProduct();
             cin.get();
@@ -1067,14 +1059,14 @@ void Administration::deleteProduct()
     system("cls");
     cout << "\n\n\n\t\tDelete Record";
     cout << "\n\n\tPlease Enter The Product Number that You Want To Delete: ";
-    cin >> number;
+    cin >> search_number;
     fs.open("shopping_database.txt", ios :: in | ios :: out);
     fstream fs2;
     fs2.open("temp.txt", ios ::out);
     fs.seekg(0, ios ::beg);
     while (fs.read((char * ) & pr, sizeof(Product))) 
     {
-        if (pr.retpno() != number) 
+        if (pr.retpno() != search_number) 
         {
             fs2.write((char * ) & pr, sizeof(Product));
         }
@@ -1123,12 +1115,9 @@ void Product::productMenu()
 
 void Administration::placeOrder()
 {
-	int order_arr[50], quan[50], acc_no, c = 0, flag = 0;
-    float amt, damt, total = 0;
-    char ch;
-    
+    system("cls");
 	cout<<"\nEnter your Customer Account Number: ";
-	cin>>acc_no;
+	cin>>account_number;
     pr.productMenu();
     cout << "\n====================================================";
     cout << "\n\t\t PLACE YOUR ORDER";
@@ -1136,32 +1125,32 @@ void Administration::placeOrder()
     do 
     {
         cout << "\n\nEnter Product Number Of The Product: ";
-        cin >> order_arr[c];
+        cin >> order_array[counter];
         cout << "\nQuantity in number : ";
-        cin >> quan[c];
-        c++;
+        cin >> quantity[counter];
+        counter++;
         cout << "\nDo You Want To Order Another Product? (Y/N) ";
-        cin >> ch;
-    } while (ch == 'y' || ch == 'Y');
+        cin >> choice;
+    } while (choice == 'y' || choice == 'Y');
     // cin.get();
     cout << "\n\nThank You For Placing The Order";
     cin.get();
     system("cls");
     cout << "\n\n*************************** INVOICE ****************************\n";
     cout << "\nPr No.\tPr Name\tQuantity \tPrice \tAmount \tAfter discount\n";
-    for (int x = 0; x <= c; x++) 
+    for (int x = 0; x <= counter; x++) 
     {
         fs.open("shopping_database.txt", ios:: in );
         fs.read((char * ) & pr, sizeof(Product));
         while (!fs.eof())
         {
-            if (pr.retpno() == order_arr[x]) 
+            if (pr.retpno() == order_array[x]) 
             {
-                amt = pr.retprice() * quan[x];
-                damt = amt - (amt * pr.retdis() / 100);
-                cout << "\n" << order_arr[x] << "\t" << pr.retname() <<
-                    "\t" << quan[x] << "\t\t" << pr.retprice() << "\t" << amt << "\t\t" << damt;
-                total += damt;
+                amount = pr.retprice() * quantity[x];
+                discount_amount = amount - (amount * pr.retdis() / 100);
+                cout << "\n" << order_array[x] << "\t" << pr.retname() <<
+                    "\t" << quantity[x] << "\t\t" << pr.retprice() << "\t" << amount << "\t\t" << discount_amount;
+                total += discount_amount;
             }
             fs.read((char * ) & pr, sizeof(Product));
         }
@@ -1174,11 +1163,11 @@ void Administration::placeOrder()
 //    fs.read((char * ) & cr, sizeof(Customer));
     while (fs.read((char * ) & cr, sizeof(Customer))) 
 	{
-	    if(cr.kyc.acct_no == acc_no)
+	    if(cr.kyc.account_number == account_number)
 	    {
-    		cr.kyc.bill_os += total;
+    		cr.kyc.bill_dues += total;
     		flag = 1;
-    		cout<<"\n\nYour Total Outstanding Bills = "<<cr.kyc.bill_os;
+    		cout<<"\n\nYour Total Outstanding Bills = "<<cr.kyc.bill_dues;
     		cin.get();
     		fs.write((char * ) & cr, sizeof(Product));
     	}
@@ -1224,9 +1213,12 @@ void Product::adminMenu()
     cout << "\n\n\t7.CUSTOMER MANAGEMENT";
     cout << "\n\n\t8.LOGOUT";
     cout << "\n\n\tPlease Enter Your Choice (1-8) ";
-	cin>>ch2;
+	cin>>chosen;
 
-    switch(ch2)
+    ss << chosen; ss >> choice;
+    ss.clear();
+
+    switch(choice)
     {
     case '1':
         system("cls");
@@ -1236,11 +1228,10 @@ void Product::adminMenu()
         displayAll();
         break;
     case '3':
-        int num;
         system("cls");
         cout << "\n\n\tPlease Enter The Product Number: ";
-        cin >> num;
-        ad.displaySpecific(num);
+        cin >> product_number;
+        ad.displaySpecific(product_number);
         break;
     case '4':
         ad.modifyProduct();
